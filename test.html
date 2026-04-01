@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EQ Assessment | Emotional Intelligence Test</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --card: #14141e;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --text: #f0eee8;
+    --muted: #8a8a9a;
+    --accent: #c9a96e;
+    --accent2: #7c6ef5;
+    --accent3: #4ecdc4;
+    --danger: #e05c5c;
+    --success: #5cb87a;
+    --r: 12px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: .4;
+  }
+
+  .wrap { position: relative; z-index: 1; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+  }
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+  .orb1 { width:500px; height:500px; background:rgba(124,110,245,0.12); top:-100px; left:-100px; }
+  .orb2 { width:400px; height:400px; background:rgba(201,169,110,0.10); bottom:-50px; right:-80px; }
+  .orb3 { width:300px; height:300px; background:rgba(78,205,196,0.08); top:50%; left:50%; transform:translate(-50%,-50%); }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(201,169,110,0.1);
+    border: 1px solid rgba(201,169,110,0.25);
+    border-radius: 50px;
+    padding: 6px 18px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2rem;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 700;
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #f0eee8 0%, #c9a96e 50%, #7c6ef5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+  }
+  .hero-attrs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 3rem;
+    max-width: 700px;
+  }
+  .attr-pill {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 8px 18px;
+    font-size: 13px;
+    color: var(--muted);
+    transition: all .3s;
+  }
+  .attr-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #a8834a);
+    border: none;
+    border-radius: 50px;
+    padding: 16px 48px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0a0a0f;
+    cursor: pointer;
+    transition: all .3s;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: .5px;
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(201,169,110,0.3); }
+
+  /* ── SCREENS ── */
+  .screen { display: none; padding: 2rem 1rem 4rem; max-width: 900px; margin: 0 auto; }
+  .screen.active { display: block; }
+
+  /* ── INFO FORM ── */
+  .form-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 2.5rem;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+  .form-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin-bottom: .5rem;
+  }
+  .form-sub { color: var(--muted); margin-bottom: 2rem; font-size: .95rem; }
+  .field { margin-bottom: 1.5rem; }
+  .field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 8px; letter-spacing: .5px; text-transform: uppercase; }
+  .field input, .field select {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .95rem;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .field input:focus, .field select:focus { border-color: var(--accent); }
+  .field select option { background: var(--bg3); }
+
+  /* ── ATTRIBUTE MENU ── */
+  .attr-menu-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    text-align: center;
+    margin-bottom: .5rem;
+  }
+  .attr-menu-sub { color: var(--muted); text-align: center; margin-bottom: 2.5rem; }
+  .progress-bar-wrap { margin-bottom: 2rem; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .progress-bar { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); border-radius: 2px; transition: width .5s ease; }
+
+  .attr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .attr-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all .3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .attr-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent2), var(--accent3));
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .attr-card:hover::before { opacity: 0.07; }
+  .attr-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+  .attr-card.done { border-color: var(--success); }
+  .attr-card.done::after {
+    content: '✓';
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    color: var(--success);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .attr-card.active-attr { border-color: var(--accent); }
+  .attr-icon { font-size: 1.8rem; margin-bottom: .75rem; }
+  .attr-name { font-weight: 600; font-size: .95rem; margin-bottom: .25rem; }
+  .attr-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+  .attr-num { font-size: .75rem; color: var(--accent); margin-top: .5rem; }
+
+  /* ── QUIZ ── */
+  .quiz-header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .quiz-attr-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 8px 20px;
+    font-size: .85rem;
+    margin-bottom: 1rem;
+    color: var(--accent);
+  }
+  .quiz-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    margin-bottom: .5rem;
+  }
+  .q-progress { font-size: .85rem; color: var(--muted); }
+
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    animation: fadeUp .4s ease forwards;
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(16px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+  .q-number { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: .75rem; }
+  .q-text { font-size: 1.05rem; font-weight: 500; line-height: 1.6; margin-bottom: 1.5rem; }
+  .options { display: flex; flex-direction: column; gap: .75rem; }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .2s;
+    font-size: .95rem;
+  }
+  .option:hover { border-color: var(--border2); background: rgba(124,110,245,0.07); }
+  .option.selected { border-color: var(--accent2); background: rgba(124,110,245,0.12); color: #d0ccff; }
+  .option-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--border2);
+    flex-shrink: 0;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .option.selected .option-dot {
+    background: var(--accent2);
+    border-color: var(--accent2);
+  }
+  .option.selected .option-dot::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .quiz-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 12px 28px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem;
+    transition: all .2s;
+  }
+  .btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+  .btn-next {
+    background: linear-gradient(135deg, var(--accent2), #5a4fd4);
+    border: none;
+    border-radius: 50px;
+    padding: 12px 32px;
+    color: #fff;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem;
+    font-weight: 600;
+    transition: all .2s;
+  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,110,245,0.3); }
+  .btn-next:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+  /* ── REPORT ── */
+  .report-hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .report-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 auto 1rem;
+    font-family: 'Playfair Display', serif;
+  }
+  .report-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin-bottom: .25rem;
+  }
+  .report-meta { color: var(--muted); font-size: .9rem; margin-bottom: 1.5rem; }
+  .eq-score-ring {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 2rem auto;
+  }
+  .eq-ring-svg { width:160px; height:160px; }
+  .eq-ring-bg { fill:none; stroke: var(--bg3); stroke-width:10; }
+  .eq-ring-fill { fill:none; stroke-width:10; stroke-linecap:round; transition: stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1); }
+  .eq-score-text {
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    text-align:center;
+  }
+  .eq-score-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height:1;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .eq-score-label { font-size: .75rem; color: var(--muted); margin-top: 4px; }
+  .eq-level-badge {
+    display: inline-block;
+    padding: 8px 24px;
+    border-radius: 50px;
+    font-size: .85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  .report-section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin: 2.5rem 0 1.25rem;
+    padding-bottom: .75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── ATTRIBUTE BARS ── */
+  .attr-report-grid { display: flex; flex-direction: column; gap: 1rem; }
+  .attr-bar-row {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+  }
+  .abr-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75rem; }
+  .abr-name { font-weight: 600; font-size: .95rem; display: flex; align-items: center; gap: 8px; }
+  .abr-score { font-size: .9rem; color: var(--accent); font-weight: 600; }
+  .abr-track { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .abr-fill { height: 100%; border-radius: 3px; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+  .abr-desc { font-size: .8rem; color: var(--muted); margin-top: .6rem; line-height: 1.5; }
+
+  /* ── RADAR SVG ── */
+  .radar-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 2rem;
+    text-align: center;
+  }
+  .radar-svg { max-width: 400px; width: 100%; }
+
+  /* ── INSIGHT CARDS ── */
+  .insight-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+  .insight-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+  }
+  .insight-tag {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    margin-bottom: .75rem;
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 50px;
+  }
+  .insight-title { font-weight: 600; font-size: 1rem; margin-bottom: .5rem; }
+  .insight-text { font-size: .85rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── RECOMMENDATIONS ── */
+  .reco-list { display: flex; flex-direction: column; gap: .75rem; }
+  .reco-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+  }
+  .reco-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(201,169,110,0.15);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .reco-text { font-size: .9rem; color: var(--muted); line-height: 1.6; }
+  .reco-text strong { color: var(--text); font-weight: 600; }
+
+  /* ── STUDENT INFO TABLE ── */
+  .student-info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .si-row { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .si-item { flex: 1; min-width: 140px; }
+  .si-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 4px; }
+  .si-val { font-size: .95rem; font-weight: 500; }
+
+  .btn-restart {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 14px 40px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .95rem;
+    cursor: pointer;
+    transition: all .2s;
+    margin-top: 2.5rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .btn-restart:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -.5px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .nav-tag { font-size: .75rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  @media (max-width: 600px) {
+    .form-card { padding: 1.5rem; }
+    .attr-grid { grid-template-columns: 1fr 1fr; }
+    .si-row { gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <span class="nav-logo">EQ Insight</span>
+  <span class="nav-tag">Psychological Assessment</span>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section id="heroScreen" class="screen active" style="max-width:100%;padding:0;">
+  <div class="hero" style="padding-top:6rem;">
+    <div class="hero-orb orb1"></div>
+    <div class="hero-orb orb2"></div>
+    <div class="hero-orb orb3"></div>
+    <div class="hero-badge">⬡ Psychological Assessment</div>
+    <h1>Emotional<br>Intelligence<br>Assessment</h1>
+    <p class="hero-sub">Discover your EQ profile across 8 core dimensions. 80 research-backed questions. Your personalized psychological report awaits.</p>
+    <div class="hero-attrs">
+      <span class="attr-pill">🧠 Self-Awareness</span>
+      <span class="attr-pill">🌊 Self-Regulation</span>
+      <span class="attr-pill">🔥 Motivation</span>
+      <span class="attr-pill">💛 Empathy</span>
+      <span class="attr-pill">🤝 Social Skills</span>
+      <span class="attr-pill">⚡ Emotional Resilience</span>
+      <span class="attr-pill">🎭 Emotional Expression</span>
+      <span class="attr-pill">🔮 Mindfulness</span>
+    </div>
+    <button class="btn-primary" onclick="startApp()">Begin Assessment →</button>
+    <p style="margin-top:1rem;font-size:.8rem;color:var(--muted);">80 questions · ~15 minutes · Free report</p>
+  </div>
+</section>
+
+<!-- ══ STUDENT INFO ══ -->
+<section id="infoScreen" class="screen">
+  <div class="form-card">
+    <h2 class="form-title">Your Profile</h2>
+    <p class="form-sub">Help us personalize your psychological report.</p>
+    <div class="field">
+      <label>Full Name</label>
+      <input type="text" id="f_name" placeholder="Enter your full name" />
+    </div>
+    <div class="field">
+      <label>Age</label>
+      <input type="number" id="f_age" placeholder="Your age" min="10" max="80" />
+    </div>
+    <div class="field">
+      <label>Gender</label>
+      <select id="f_gender">
+        <option value="">Select gender</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Non-binary</option>
+        <option>Prefer not to say</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Education Level</label>
+      <select id="f_edu">
+        <option value="">Select education</option>
+        <option>High School</option>
+        <option>Undergraduate</option>
+        <option>Postgraduate</option>
+        <option>Doctorate</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Occupation</label>
+      <input type="text" id="f_occ" placeholder="Student / Professional / etc." />
+    </div>
+    <button class="btn-primary" style="width:100%;border-radius:8px;" onclick="submitInfo()">Continue to Assessment →</button>
+  </div>
+</section>
+
+<!-- ══ ATTRIBUTE MENU ══ -->
+<section id="attrScreen" class="screen">
+  <h2 class="attr-menu-title">Choose an Attribute</h2>
+  <p class="attr-menu-sub">Complete all 8 modules to generate your full EQ report.</p>
+  <div class="progress-bar-wrap" id="overallProgress" style="max-width:600px;margin:0 auto 2rem;"></div>
+  <div class="attr-grid" id="attrGrid"></div>
+</section>
+
+<!-- ══ QUIZ ══ -->
+<section id="quizScreen" class="screen">
+  <div class="quiz-header">
+    <div class="quiz-attr-label" id="quizAttrLabel"></div>
+    <h2 class="quiz-title" id="quizTitle"></h2>
+    <p class="q-progress" id="qProgress"></p>
+  </div>
+  <div id="questionsContainer"></div>
+  <div class="quiz-nav">
+    <button class="btn-ghost" onclick="backToAttrs()">← Back</button>
+    <button class="btn-next" id="submitQuizBtn" onclick="submitQuiz()">Submit Attribute</button>
+  </div>
+</section>
+
+<!-- ══ REPORT ══ -->
+<section id="reportScreen" class="screen">
+  <div id="reportContent"></div>
+</section>
+
+</div><!-- /wrap -->
+
+<script>
+const ATTRS = [
+  {
+    id: 'self_awareness',
+    icon: '🧠',
+    name: 'Self-Awareness',
+    desc: 'Recognizing your own emotions, strengths, and limitations.',
+    color: '#7c6ef5',
+    gradient: 'linear-gradient(135deg,#7c6ef5,#a855f7)',
+    questions: [
+      { q: 'When you feel angry, you are usually able to identify the exact reason why.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You notice when your mood shifts throughout the day.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You are aware of how your emotions affect your decisions.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'Others\' feedback about your behavior often surprises you.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'You can accurately predict how you will feel in a future situation.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You recognize when you are being defensive.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You are aware of your personal values and how they guide you.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You find it easy to label exactly what emotion you are feeling.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You are comfortable acknowledging your weaknesses.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'When stressed, you can distinguish between physical tension and emotional unease.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] }
+    ]
+  },
+  {
+    id: 'self_regulation',
+    icon: '🌊',
+    name: 'Self-Regulation',
+    desc: 'Managing disruptive emotions and impulses effectively.',
+    color: '#4ecdc4',
+    gradient: 'linear-gradient(135deg,#4ecdc4,#2980b9)',
+    questions: [
+      { q: 'When upset, you are able to calm yourself down within a reasonable time.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You say things impulsively that you later regret.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'You can delay gratification to achieve a long-term goal.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You maintain composure under high-pressure situations.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'When criticized unfairly, you respond thoughtfully rather than reactively.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You find it difficult to stop worrying once you start.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'You adjust your behavior when you realize it is unhelpful.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You keep commitments even when your mood makes it difficult.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'Negative moods prevent you from completing tasks.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'You can sit with uncomfortable feelings without acting out.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] }
+    ]
+  },
+  {
+    id: 'motivation',
+    icon: '🔥',
+    name: 'Motivation',
+    desc: 'Harnessing emotions to pursue goals with persistence.',
+    color: '#f5a623',
+    gradient: 'linear-gradient(135deg,#f5a623,#e05c5c)',
+    questions: [
+      { q: 'You persist on challenging tasks even when progress feels slow.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You set high personal standards for yourself.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You feel driven by an internal sense of purpose beyond external rewards.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'Setbacks cause you to lose motivation for extended periods.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'You look for opportunities to improve your performance.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You maintain optimism even in difficult circumstances.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You are energized by new challenges rather than intimidated by them.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You take initiative without being told.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You give up on goals when obstacles arise.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'Your personal achievements bring you deep satisfaction.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] }
+    ]
+  },
+  {
+    id: 'empathy',
+    icon: '💛',
+    name: 'Empathy',
+    desc: 'Understanding and sharing the feelings of others.',
+    color: '#f9d423',
+    gradient: 'linear-gradient(135deg,#f9d423,#f5a623)',
+    questions: [
+      { q: 'You can sense when someone is upset even before they say anything.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You find it easy to understand someone\'s perspective even if it differs from yours.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You are moved by others\' suffering.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You pay close attention to body language and tone of voice.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'People tell you that you are a good listener.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You struggle to relate to people who are very different from you.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'You adjust your communication style based on the emotional state of the other person.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You can comfort others effectively during difficult times.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You often absorb the emotions of people around you.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You find it easy to put yourself in someone else\'s shoes.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] }
+    ]
+  },
+  {
+    id: 'social_skills',
+    icon: '🤝',
+    name: 'Social Skills',
+    desc: 'Managing relationships and building networks.',
+    color: '#5cb87a',
+    gradient: 'linear-gradient(135deg,#5cb87a,#4ecdc4)',
+    questions: [
+      { q: 'You find it easy to build rapport with new people.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You are skilled at resolving conflicts between others.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You are comfortable speaking in front of groups.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You know how to influence others without being manipulative.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'People describe you as approachable and easy to talk to.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You find team collaboration challenging.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'You are good at networking and maintaining professional relationships.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You can inspire or motivate others to take action.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You handle difficult conversations with grace and tact.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You are able to read social cues accurately.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] }
+    ]
+  },
+  {
+    id: 'resilience',
+    icon: '⚡',
+    name: 'Emotional Resilience',
+    desc: 'Bouncing back from adversity and emotional setbacks.',
+    color: '#e05c5c',
+    gradient: 'linear-gradient(135deg,#e05c5c,#f5a623)',
+    questions: [
+      { q: 'You recover quickly after emotional setbacks.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'Failure tends to discourage you for a long time.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'You find meaning or lessons in difficult experiences.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You can function effectively even when things are going badly in your personal life.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You feel overwhelmed when multiple stressors occur simultaneously.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'You adapt well to major changes in your life.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You tend to ruminate on negative events.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'You maintain a sense of humor even during tough times.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You rely on healthy coping strategies when stressed.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You emerge from challenges stronger than before.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] }
+    ]
+  },
+  {
+    id: 'expression',
+    icon: '🎭',
+    name: 'Emotional Expression',
+    desc: 'Communicating your feelings clearly and appropriately.',
+    color: '#c9a96e',
+    gradient: 'linear-gradient(135deg,#c9a96e,#e05c5c)',
+    questions: [
+      { q: 'You find it easy to express how you are feeling to others.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You suppress emotions to avoid conflict.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'You can express difficult emotions (anger, sadness) in constructive ways.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You express affection and appreciation to people close to you.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You bottle up your feelings until you reach a breaking point.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'You are able to cry or laugh freely when the situation calls for it.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You express your needs assertively, not aggressively.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You feel embarrassed when showing emotion in public.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'Others know how you feel without you having to explain yourself.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You can set emotional boundaries in relationships.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] }
+    ]
+  },
+  {
+    id: 'mindfulness',
+    icon: '🔮',
+    name: 'Mindfulness',
+    desc: 'Present-moment emotional awareness without judgment.',
+    color: '#a855f7',
+    gradient: 'linear-gradient(135deg,#a855f7,#7c6ef5)',
+    questions: [
+      { q: 'You are aware of your emotional state in the present moment.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'Your mind tends to wander to worries about the future.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'You accept your emotions without judging yourself for having them.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You notice subtle changes in your body connected to your emotional state.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You often act on autopilot without noticing how you feel.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'You can observe your thoughts and feelings without being controlled by them.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'Emotional awareness feels effortful for you.', opts: ['Almost always','Often','Sometimes','Rarely','Almost never'] },
+      { q: 'You take time to pause and check in with your emotions each day.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You engage with emotional experiences with curiosity rather than avoidance.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] },
+      { q: 'You feel grounded and present even in stressful situations.', opts: ['Almost never','Rarely','Sometimes','Often','Almost always'] }
+    ]
+  }
+];
+
+let student = {};
+let scores = {};
+let currentAttrId = null;
+let answers = {};
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function startApp() { show('infoScreen'); }
+
+function submitInfo() {
+  const name = document.getElementById('f_name').value.trim();
+  const age = document.getElementById('f_age').value;
+  const gender = document.getElementById('f_gender').value;
+  const edu = document.getElementById('f_edu').value;
+  const occ = document.getElementById('f_occ').value.trim();
+  if (!name || !age || !gender || !edu) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+  student = { name, age, gender, edu, occ: occ || 'Not specified', date: new Date().toLocaleDateString('en-IN',{year:'numeric',month:'long',day:'numeric'}) };
+  buildAttrGrid();
+  show('attrScreen');
+}
+
+function buildAttrGrid() {
+  const grid = document.getElementById('attrGrid');
+  grid.innerHTML = ATTRS.map(a => `
+    <div class="attr-card ${scores[a.id]!==undefined?'done':''}" id="ac_${a.id}" onclick="openAttr('${a.id}')">
+      <div class="attr-icon">${a.icon}</div>
+      <div class="attr-name">${a.name}</div>
+      <div class="attr-desc">${a.desc}</div>
+      <div class="attr-num">${scores[a.id]!==undefined ? '✓ Completed' : '10 questions'}</div>
+    </div>
+  `).join('');
+  const done = Object.keys(scores).length;
+  document.getElementById('overallProgress').innerHTML = `
+    <div class="progress-label"><span>${done} of 8 attributes completed</span><span>${Math.round(done/8*100)}%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${done/8*100}%"></div></div>
+  `;
+}
+
+function openAttr(id) {
+  currentAttrId = id;
+  answers[id] = answers[id] || {};
+  const attr = ATTRS.find(a=>a.id===id);
+  document.getElementById('quizAttrLabel').innerHTML = `<span style="font-size:1.2rem">${attr.icon}</span> ${attr.name}`;
+  document.getElementById('quizTitle').textContent = attr.desc;
+  renderQuestions(attr);
+  show('quizScreen');
+}
+
+function renderQuestions(attr) {
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = attr.questions.map((q,qi)=>`
+    <div class="question-card" style="animation-delay:${qi*0.05}s">
+      <div class="q-number">Question ${qi+1} of 10</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((o,oi)=>`
+          <div class="option ${answers[attr.id][qi]===oi?'selected':''}" onclick="selectOpt(${qi},${oi})">
+            <div class="option-dot"></div>
+            <span>${o}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+  updateProgress();
+}
+
+function selectOpt(qi, oi) {
+  answers[currentAttrId][qi] = oi;
+  const attr = ATTRS.find(a=>a.id===currentAttrId);
+  document.querySelectorAll(`.question-card:nth-child(${qi+1}) .option`).forEach((el,i)=>{
+    el.classList.toggle('selected', i===oi);
+  });
+  // Re-render properly
+  const allCards = document.querySelectorAll('.question-card');
+  allCards.forEach((card, idx)=>{
+    card.querySelectorAll('.option').forEach((opt,oi2)=>{
+      opt.classList.toggle('selected', answers[currentAttrId][idx]===oi2);
+    });
+  });
+  updateProgress();
+}
+
+function updateProgress() {
+  const ans = answers[currentAttrId] || {};
+  const count = Object.keys(ans).length;
+  document.getElementById('qProgress').textContent = `${count} of 10 answered`;
+  document.getElementById('submitQuizBtn').disabled = count < 10;
+}
+
+function submitQuiz() {
+  const attr = ATTRS.find(a=>a.id===currentAttrId);
+  const ans = answers[currentAttrId];
+  let total = 0;
+  for (let i=0;i<10;i++) { total += (ans[i]||0)+1; }
+  scores[currentAttrId] = Math.round((total/50)*100);
+  buildAttrGrid();
+  show('attrScreen');
+  if (Object.keys(scores).length === 8) {
+    setTimeout(()=>{
+      if(confirm('All 8 attributes complete! View your full EQ report?')) generateReport();
+    },400);
+  }
+}
+
+function backToAttrs() { show('attrScreen'); }
+
+function generateReport() {
+  const total = Math.round(Object.values(scores).reduce((a,b)=>a+b,0)/8);
+  const sorted = ATTRS.map(a=>({...a, score: scores[a.id]})).sort((a,b)=>b.score-a.score);
+  const top3 = sorted.slice(0,3);
+  const bot3 = sorted.slice(-3).reverse();
+
+  let level, levelColor, levelBg;
+  if (total>=85) { level='Exceptional EQ'; levelColor='#5cb87a'; levelBg='rgba(92,184,122,0.12)'; }
+  else if (total>=70) { level='High EQ'; levelColor='#4ecdc4'; levelBg='rgba(78,205,196,0.12)'; }
+  else if (total>=55) { level='Developing EQ'; levelColor='#f5a623'; levelBg='rgba(245,166,35,0.12)'; }
+  else { level='Emerging EQ'; levelColor='#e05c5c'; levelBg='rgba(224,92,92,0.12)'; }
+
+  const initials = student.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const circumference = 2 * Math.PI * 60;
+  const dashOffset = circumference - (total/100)*circumference;
+
+  const insightDescriptions = {
+    self_awareness: ['deep introspective clarity','limited self-insight'],
+    self_regulation:'emotional control',
+    motivation:'inner drive',
+    empathy:'compassionate understanding',
+    social_skills:'relational intelligence',
+    resilience:'emotional bounce-back',
+    expression:'authentic communication',
+    mindfulness:'present-moment awareness'
+  };
+
+  const recoMap = {
+    self_awareness: 'Practice daily journaling to track emotional patterns. Therapy or coaching can accelerate self-insight.',
+    self_regulation: 'Try box breathing and the STOP technique (Stop, Take a breath, Observe, Proceed) when triggered.',
+    motivation: 'Set WOOP goals (Wish, Outcome, Obstacle, Plan) and celebrate small wins to sustain momentum.',
+    empathy: 'Practice active listening — mirror back what you hear before responding. Read literary fiction to expand perspective.',
+    social_skills: 'Seek out low-stakes social challenges. Study nonverbal communication and practice assertiveness scripts.',
+    resilience: 'Build your resilience routine: exercise, social connection, meaning-making journaling.',
+    expression: 'Use "I feel..." statements. Practice expressing appreciation daily. Work with a therapist if expression feels blocked.',
+    mindfulness: 'Start with 5 minutes of mindful breathing daily. The Headspace or Insight Timer apps can help structure practice.'
+  };
+
+  const reportHTML = `
+    <div class="report-hero">
+      <div class="report-avatar">${initials}</div>
+      <div class="report-name">${student.name}</div>
+      <div class="report-meta">${student.age} years · ${student.gender} · ${student.edu} · ${student.date}</div>
+      <div class="eq-level-badge" style="background:${levelBg};color:${levelColor}">${level}</div>
+      <div class="eq-score-ring">
+        <svg class="eq-ring-svg" viewBox="0 0 140 140">
+          <circle class="eq-ring-bg" cx="70" cy="70" r="60"/>
+          <circle class="eq-ring-fill" cx="70" cy="70" r="60"
+            stroke="${levelColor}"
+            stroke-dasharray="${circumference}"
+            stroke-dashoffset="${circumference}"
+            id="ringFill"
+            transform="rotate(-90 70 70)"/>
+        </svg>
+        <div class="eq-score-text">
+          <div class="eq-score-num" id="scoreNum">0</div>
+          <div class="eq-score-label">EQ Score</div>
+        </div>
+      </div>
+      <p style="color:var(--muted);font-size:.95rem;max-width:500px;margin:0 auto;line-height:1.7;">
+        ${getEQSummary(total, top3, bot3)}
+      </p>
+    </div>
+
+    <h3 class="report-section-title">Student Information</h3>
+    <div class="student-info-card">
+      <div class="si-row">
+        <div class="si-item"><div class="si-label">Name</div><div class="si-val">${student.name}</div></div>
+        <div class="si-item"><div class="si-label">Age</div><div class="si-val">${student.age}</div></div>
+        <div class="si-item"><div class="si-label">Gender</div><div class="si-val">${student.gender}</div></div>
+        <div class="si-item"><div class="si-label">Education</div><div class="si-val">${student.edu}</div></div>
+        <div class="si-item"><div class="si-label">Occupation</div><div class="si-val">${student.occ}</div></div>
+        <div class="si-item"><div class="si-label">Test Date</div><div class="si-val">${student.date}</div></div>
+      </div>
+    </div>
+
+    <h3 class="report-section-title">Attribute Scores</h3>
+    <div class="attr-report-grid">
+      ${ATTRS.map(a=>{
+        const s = scores[a.id];
+        let barColor;
+        if(s>=80) barColor='#5cb87a';
+        else if(s>=60) barColor='#4ecdc4';
+        else if(s>=40) barColor='#f5a623';
+        else barColor='#e05c5c';
+        const level2 = s>=80?'Strong':s>=60?'Good':s>=40?'Developing':'Needs Focus';
+        return `
+        <div class="attr-bar-row">
+          <div class="abr-top">
+            <div class="abr-name">${a.icon} ${a.name}</div>
+            <div class="abr-score">${s}/100 · ${level2}</div>
+          </div>
+          <div class="abr-track"><div class="abr-fill" data-width="${s}" style="width:0;background:${barColor};"></div></div>
+          <div class="abr-desc">${a.desc}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <h3 class="report-section-title">EQ Radar Profile</h3>
+    <div class="radar-wrap">
+      ${buildRadar(scores)}
+    </div>
+
+    <h3 class="report-section-title">Key Insights</h3>
+    <div class="insight-grid">
+      <div class="insight-card">
+        <div class="insight-tag" style="background:rgba(92,184,122,0.15);color:#5cb87a;">✦ Strengths</div>
+        <div class="insight-title">Your Top Abilities</div>
+        <div class="insight-text">${top3.map(a=>`<strong style="color:var(--text)">${a.icon} ${a.name}</strong> (${a.score}/100)`).join(', ')} — these dimensions reflect your core emotional intelligence advantages.</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-tag" style="background:rgba(245,166,35,0.15);color:#f5a623;">↑ Growth Areas</div>
+        <div class="insight-title">Areas to Develop</div>
+        <div class="insight-text">${bot3.map(a=>`<strong style="color:var(--text)">${a.icon} ${a.name}</strong> (${a.score}/100)`).join(', ')} — targeted practice here will produce the greatest EQ gains.</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-tag" style="background:rgba(124,110,245,0.15);color:#7c6ef5;">⬡ Overall Profile</div>
+        <div class="insight-title">EQ Balance</div>
+        <div class="insight-text">Your score variance is ${Math.max(...Object.values(scores)) - Math.min(...Object.values(scores))} points. ${Math.max(...Object.values(scores)) - Math.min(...Object.values(scores)) < 20 ? 'This indicates a well-rounded EQ profile.' : 'Balancing your stronger and weaker dimensions will create more consistent emotional effectiveness.'}</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-tag" style="background:rgba(78,205,196,0.15);color:#4ecdc4;">◈ Percentile</div>
+        <div class="insight-title">Compared to Norm</div>
+        <div class="insight-text">An overall EQ of <strong style="color:var(--text)">${total}/100</strong> places you in approximately the <strong style="color:var(--text)">${getPercentile(total)}</strong> of the general population on emotional intelligence scales.</div>
+      </div>
+    </div>
+
+    <h3 class="report-section-title">Personalized Recommendations</h3>
+    <div class="reco-list">
+      ${bot3.map((a,i)=>`
+      <div class="reco-item">
+        <div class="reco-num">${i+1}</div>
+        <div class="reco-text"><strong>${a.icon} ${a.name}:</strong> ${recoMap[a.id]}</div>
+      </div>`).join('')}
+      <div class="reco-item">
+        <div class="reco-num">4</div>
+        <div class="reco-text"><strong>General EQ Practice:</strong> Consider reading <em>Emotional Intelligence</em> by Daniel Goleman, or <em>Permission to Feel</em> by Marc Brackett. Daily reflection and intentional relationship-building are the most evidence-based paths to EQ growth.</div>
+      </div>
+      <div class="reco-item">
+        <div class="reco-num">5</div>
+        <div class="reco-text"><strong>Professional Support:</strong> If you scored below 50 in multiple areas, working with a licensed therapist or executive coach specializing in emotional intelligence can accelerate growth significantly.</div>
+      </div>
+    </div>
+
+    <button class="btn-restart" onclick="restartApp()">↺ Retake Assessment</button>
+  `;
+
+  document.getElementById('reportContent').innerHTML = reportHTML;
+  show('reportScreen');
+
+  setTimeout(()=>{
+    const ring = document.getElementById('ringFill');
+    if(ring) ring.style.strokeDashoffset = dashOffset;
+    let count = 0;
+    const numEl = document.getElementById('scoreNum');
+    const interval = setInterval(()=>{
+      count += 2;
+      if(count>=total){ count=total; clearInterval(interval); }
+      if(numEl) numEl.textContent = count;
+    },30);
+    document.querySelectorAll('.abr-fill[data-width]').forEach(el=>{
+      setTimeout(()=>{ el.style.width = el.dataset.width+'%'; },200);
+    });
+  },300);
+}
+
+function getEQSummary(total, top3, bot3) {
+  if (total >= 85) return `You demonstrate exceptional emotional intelligence, particularly in ${top3[0].name.toLowerCase()} and ${top3[1].name.toLowerCase()}. Your EQ profile suggests strong capacities for empathetic leadership and relational effectiveness.`;
+  if (total >= 70) return `You show strong emotional intelligence with notable abilities in ${top3[0].name.toLowerCase()}. With continued focus on ${bot3[0].name.toLowerCase()}, your EQ can reach its full potential.`;
+  if (total >= 55) return `Your emotional intelligence is developing well. You have real strengths in ${top3[0].name.toLowerCase()}, and meaningful growth awaits in ${bot3[0].name.toLowerCase()} and ${bot3[1].name.toLowerCase()}.`;
+  return `You are at an early stage of EQ development. This is valuable self-knowledge. With intentional practice — especially in ${bot3[0].name.toLowerCase()} — significant transformation is possible.`;
+}
+
+function getPercentile(score) {
+  if (score >= 90) return 'top 10%';
+  if (score >= 80) return 'top 20%';
+  if (score >= 70) return 'top 35%';
+  if (score >= 55) return 'middle 50%';
+  return 'lower 35%';
+}
+
+function buildRadar(scores) {
+  const attrs = ATTRS;
+  const n = attrs.length;
+  const cx=200, cy=200, r=130;
+  const angleStep = (2*Math.PI)/n;
+  const levels = [0.2,0.4,0.6,0.8,1.0];
+
+  const gridLines = levels.map(l=>{
+    const pts = attrs.map((_,i)=>{
+      const a = i*angleStep - Math.PI/2;
+      return `${cx+r*l*Math.cos(a)},${cy+r*l*Math.sin(a)}`;
+    }).join(' ');
+    return `<polygon points="${pts}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>`;
+  }).join('');
+
+  const spokes = attrs.map((_,i)=>{
+    const a = i*angleStep - Math.PI/2;
+    return `<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(a)}" y2="${cy+r*Math.sin(a)}" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>`;
+  }).join('');
+
+  const dataPts = attrs.map((a,i)=>{
+    const val = (scores[a.id]||0)/100;
+    const ang = i*angleStep - Math.PI/2;
+    return `${cx+r*val*Math.cos(ang)},${cy+r*val*Math.sin(ang)}`;
+  });
+  const dataShape = `<polygon points="${dataPts.join(' ')}" fill="rgba(124,110,245,0.2)" stroke="#7c6ef5" stroke-width="2"/>`;
+
+  const labels = attrs.map((a,i)=>{
+    const ang = i*angleStep - Math.PI/2;
+    const lx = cx+(r+22)*Math.cos(ang);
+    const ly = cy+(r+22)*Math.sin(ang);
+    return `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" fill="rgba(240,238,232,0.7)" font-size="11" font-family="DM Sans,sans-serif">${a.icon}</text>
+    <text x="${lx}" y="${ly+14}" text-anchor="middle" fill="rgba(240,238,232,0.5)" font-size="9" font-family="DM Sans,sans-serif">${a.name.split(' ')[0]}</text>`;
+  }).join('');
+
+  const dots = attrs.map((a,i)=>{
+    const val = (scores[a.id]||0)/100;
+    const ang = i*angleStep - Math.PI/2;
+    return `<circle cx="${cx+r*val*Math.cos(ang)}" cy="${cy+r*val*Math.sin(ang)}" r="4" fill="#7c6ef5" stroke="#a855f7" stroke-width="1.5"/>`;
+  }).join('');
+
+  return `<svg class="radar-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+    ${gridLines}${spokes}${dataShape}${dots}${labels}
+  </svg>`;
+}
+
+function restartApp() {
+  scores = {}; answers = {}; student = {}; currentAttrId = null;
+  ['f_name','f_age','f_occ'].forEach(id=>document.getElementById(id).value='');
+  ['f_gender','f_edu'].forEach(id=>document.getElementById(id).value='');
+  show('heroScreen');
+}
+</script>
+</body>
+</html>
